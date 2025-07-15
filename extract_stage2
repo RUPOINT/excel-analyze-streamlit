@@ -1,11 +1,8 @@
 import pandas as pd
 
 def process_excel_stage2(df):
-    """
-    Оставляет только указанные колонки в DataFrame.
-    Если каких-то колонок нет — просто пропускает их.
-    """
-    columns_to_keep = [
+    # Оставляем только нужные колонки
+    keep_cols = [
         "ND (Номер декларации)",
         "G141 (ИНН декларанта)",
         "G142 (Наименование декларанта)",
@@ -14,8 +11,8 @@ def process_excel_stage2(df):
         "Декларант — количество деклараций",
         "Пустые ячейки в колонке брокера",
         "Количество брокеров",
-        "Контакты"
+        "Контакты",
     ]
-    # Оставляем только существующие колонки
-    cols = [col for col in columns_to_keep if col in df.columns]
-    return df[cols].copy()
+    # Оставляем только существующие (если каких-то нет — не будет ошибки)
+    df_new = df[[col for col in keep_cols if col in df.columns]].copy()
+    return df_new
