@@ -10,15 +10,13 @@ uploaded_file = st.file_uploader("Загрузите Excel-файл", type=["xls
 if uploaded_file:
     df = pd.read_excel(uploaded_file)
     if st.button("Обработать этап 1"):
-        df_processed = process_excel(df)
+        df_processed = process_excel(df)   # <-- Вот здесь!
         st.success("Этап 1 завершён!")
         st.dataframe(df_processed)
 
-        # Готовим Excel для скачивания
         output = BytesIO()
         df_processed.to_excel(output, index=False)
         output.seek(0)
-
         st.download_button(
             label="Скачать результат",
             data=output,
