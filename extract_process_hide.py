@@ -74,3 +74,4 @@ def process_excel(df):
     except Exception as e:
         print("Ошибка при обработке:", e)
         raise
+
