@@ -1,7 +1,5 @@
-
 import pandas as pd
 from openpyxl import load_workbook
-from tkinter import Tk, filedialog, messagebox
 import re
 
 def extract_columns(input_file, temp_file, columns_to_keep):
@@ -10,7 +8,7 @@ def extract_columns(input_file, temp_file, columns_to_keep):
         df_filtered = df[columns_to_keep]
         df_filtered.to_excel(temp_file, index=False)
     except Exception as e:
-        messagebox.showerror("Ошибка при извлечении колонок", str(e))
+        print("Ошибка при извлечении колонок:", str(e))
         raise
 
 def process_excel(input_file, temp_file):
@@ -78,7 +76,7 @@ def process_excel(input_file, temp_file):
         df.to_excel(temp_file, index=False)
 
     except Exception as e:
-        messagebox.showerror("Ошибка при обработке", str(e))
+        print("Ошибка при обработке:", str(e))
         raise
 
 def hide_columns(temp_file, output_file, columns_to_hide):
@@ -88,31 +86,6 @@ def hide_columns(temp_file, output_file, columns_to_hide):
         ws.column_dimensions[col_letter].hidden = True
     wb.save(output_file)
 
-def main():
-    root = Tk()
-    root.withdraw()
+# main() и всё взаимодействие с окнами (Tk, filedialog, messagebox) УДАЛЕНО,
+# теперь использовать эти функции можно только из Streamlit/или как обычные Python-функции
 
-    input_file = filedialog.askopenfilename(title="Выберите исходный Excel-файл", filetypes=[("Excel файлы", "*.xlsx")])
-    if not input_file:
-        return
-
-    output_file = filedialog.asksaveasfilename(title="Сохранить как итоговый файл", defaultextension=".xlsx", filetypes=[("Excel файлы", "*.xlsx")])
-    if not output_file:
-        return
-
-    temp_step1 = "temp_extracted.xlsx"
-    temp_step2 = "temp_processed.xlsx"
-    columns_to_keep = ['A', 'G', 'H', 'AL', 'AM', 'AO', 'AX', 'BN', 'CY']
-    excel_col_to_index = lambda col: sum((ord(c) - 64) * (26 ** i) for i, c in enumerate(reversed(col))) - 1
-
-    df_raw = pd.read_excel(input_file)
-    cols_by_name = [df_raw.columns[excel_col_to_index(c)] for c in columns_to_keep if excel_col_to_index(c) < len(df_raw.columns)]
-
-    extract_columns(input_file, temp_step1, cols_by_name)
-    process_excel(temp_step1, temp_step2)
-    hide_columns(temp_step2, output_file, ['F', 'G'])
-
-    messagebox.showinfo("Готово", f"Файл сохранён как: {output_file}")
-
-if __name__ == "__main__":
-    main()
