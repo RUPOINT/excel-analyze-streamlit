@@ -1,20 +1,8 @@
 import pandas as pd
-from openpyxl import load_workbook
 import re
 
-def extract_columns(input_file, temp_file, columns_to_keep):
+def process_excel(df):
     try:
-        df = pd.read_excel(input_file)
-        df_filtered = df[columns_to_keep]
-        df_filtered.to_excel(temp_file, index=False)
-    except Exception as e:
-        print("Ошибка при извлечении колонок:", str(e))
-        raise
-
-def process_excel(input_file, temp_file):
-    try:
-        df = pd.read_excel(input_file, sheet_name=0)
-
         df = df.drop(columns=[col for col in df.columns if "грузовых мест" in col], errors='ignore')
         df = df.drop_duplicates(subset=["ND (Номер декларации)"], keep=False)
 
@@ -73,18 +61,12 @@ def process_excel(input_file, temp_file):
             "FIRM (Доп.информация о контрактодержателе (Росстат))"
         ], errors="ignore")
 
-        df.to_excel(temp_file, index=False)
+        return df
 
     except Exception as e:
-        print("Ошибка при обработке:", str(e))
+        print("Ошибка при обработке:", e)
         raise
 
-def hide_columns(temp_file, output_file, columns_to_hide):
-    wb = load_workbook(temp_file)
-    ws = wb.active
-    for col_letter in columns_to_hide:
-        ws.column_dimensions[col_letter].hidden = True
-    wb.save(output_file)
 
 # main() и всё взаимодействие с окнами (Tk, filedialog, messagebox) УДАЛЕНО,
 # теперь использовать эти функции можно только из Streamlit/или как обычные Python-функции
