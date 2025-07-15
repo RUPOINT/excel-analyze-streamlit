@@ -19,7 +19,6 @@ def process_excel(df):
             print("Входящий DataFrame пустой!")
             return df
 
-        # Проверка, достаточно ли столбцов для выполнения операции
         if len(df.columns) < 3:
             print("Недостаточно столбцов для объединения!")
             return df
