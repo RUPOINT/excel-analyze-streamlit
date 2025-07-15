@@ -66,8 +66,3 @@ def process_excel(df):
     except Exception as e:
         print("Ошибка при обработке:", e)
         raise
-
-
-# main() и всё взаимодействие с окнами (Tk, filedialog, messagebox) УДАЛЕНО,
-# теперь использовать эти функции можно только из Streamlit/или как обычные Python-функции
-
