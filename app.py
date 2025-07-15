@@ -12,7 +12,7 @@ import pandas as pd
 from io import BytesIO
 
 # Импортируем функцию из твоего скрипта
-from объединённый_скрипт_extract_process_hide import process_excel
+from extract_process_hide import process_excel
 
 st.title("Обработка Excel — этап 1")
 
