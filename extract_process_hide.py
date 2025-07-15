@@ -1,8 +1,29 @@
 import pandas as pd
 import re
 
+def extract_contacts(text):
+    if not isinstance(text, str):
+        return ""
+    tel_match = re.search(r"Тел:[^|\n]*", text)
+    email_match = re.search(r"Email:[^|\n]*", text)
+    parts = []
+    if tel_match:
+        parts.append(tel_match.group().strip())
+    if email_match:
+        parts.append(email_match.group().strip())
+    return " | ".join(parts)
+
 def process_excel(df):
     try:
+        if df is None or df.empty:
+            print("Входящий DataFrame пустой!")
+            return df
+
+        # Проверка, достаточно ли столбцов для выполнения операции
+        if len(df.columns) < 3:
+            print("Недостаточно столбцов для объединения!")
+            return df
+
         df = df.drop(columns=[col for col in df.columns if "грузовых мест" in col], errors='ignore')
         df = df.drop_duplicates(subset=["ND (Номер декларации)"], keep=False)
 
@@ -31,18 +52,6 @@ def process_excel(df):
             broker_count.columns = [declarant_col, "Количество брокеров"]
             df = df.merge(broker_count, on=declarant_col, how="left")
             df["Количество брокеров"] = df["Количество брокеров"].fillna(0).astype(int)
-
-        def extract_contacts(text):
-            if not isinstance(text, str):
-                return ""
-            tel_match = re.search(r"Тел:[^|\n]*", text)
-            email_match = re.search(r"Email:[^|\n]*", text)
-            parts = []
-            if tel_match:
-                parts.append(tel_match.group().strip())
-            if email_match:
-                parts.append(email_match.group().strip())
-            return " | ".join(parts)
 
         if "FIRM (Доп.информация о контрактодержателе (Росстат))" in df.columns:
             df["Контакты"] = df["FIRM (Доп.информация о контрактодержателе (Росстат))"].apply(extract_contacts)
