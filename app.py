@@ -64,7 +64,6 @@ if st.session_state.df2 is not None:
         st.session_state.df3 = process_excel_stage3(st.session_state.df2)
         st.session_state.df4 = None
 
-# Этап 3
 if st.session_state.df3 is not None:
     st.success("Этап 3 завершён! (удалены дубликаты по ИНН)")
     st.dataframe(st.session_state.df3)
@@ -79,6 +78,7 @@ if st.session_state.df3 is not None:
     )
 
 # ---------- Этап 4: Поиск сайтов компании ----------
+st.write("DEBUG: df3", st.session_state.df3)   # <---- вот это добавь!
 if st.session_state.df3 is not None:
     st.markdown("---")
     st.subheader("Этап 4: Поиск сайта компании по ИНН через Dadata, Контур.Фокус, ФНС")
@@ -94,7 +94,6 @@ if st.session_state.df3 is not None:
                 )
         else:
             st.warning("Пожалуйста, укажите все 3 API ключа")
-
 if st.session_state.df4 is not None:
     st.success("Этап 4 завершён! Сайты найдены, где удалось")
     st.dataframe(st.session_state.df4)
