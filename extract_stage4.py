@@ -10,13 +10,16 @@ def get_site_dadata(inn, token):
         if resp.status_code == 200:
             suggestions = resp.json().get('suggestions', [])
             if suggestions:
-                site = suggestions[0]['data'].get('management', {}).get('website')
+                # Обычно сайт в "data"->"contact"->"email/website"
+                site = suggestions[0]['data'].get('contact', {}).get('website')
                 if not site:
-                    # иногда сайт лежит вот тут:
+                    # Попробуй management или state если нужно (редко бывает)
+                    site = suggestions[0]['data'].get('management', {}).get('website')
+                if not site:
                     site = suggestions[0]['data'].get('state', {}).get('website')
                 return site
     except Exception as e:
-        pass
+        print(f"Dadata error: {e}")
     return None
 
 def get_site_kontur(inn, token):
@@ -31,7 +34,7 @@ def get_site_kontur(inn, token):
                     site = data[0].get('website')
                 return site
     except Exception as e:
-        pass
+        print(f"Kontur error: {e}")
     return None
 
 def get_site_fns(inn, token):
@@ -46,7 +49,7 @@ def get_site_fns(inn, token):
                 site = org.get('site') or org.get('сайт') or org.get('СвОКВЭД', {}).get('website')
                 return site
     except Exception as e:
-        pass
+        print(f"FNS error: {e}")
     return None
 
 def find_company_site(inn, dadata_token, kontur_token, fns_token):
@@ -55,7 +58,8 @@ def find_company_site(inn, dadata_token, kontur_token, fns_token):
         (get_site_kontur, 'kontur'),
         (get_site_fns, 'fns'),
     ]:
-        site = func(inn, dadata_token if name == 'dadata' else kontur_token if name == 'kontur' else fns_token)
+        token = dadata_token if name == 'dadata' else kontur_token if name == 'kontur' else fns_token
+        site = func(inn, token)
         if site:
             return site
         time.sleep(0.3)
@@ -63,8 +67,13 @@ def find_company_site(inn, dadata_token, kontur_token, fns_token):
 
 def process_excel_stage4(df, dadata_token, kontur_token, fns_token):
     sites = []
-    for inn in df["G141 (ИНН декларанта)"]:
+    for idx, inn in enumerate(df["G141 (ИНН декларанта)"]):
+        if pd.isna(inn):
+            sites.append(None)
+            continue
         site = find_company_site(str(inn), dadata_token, kontur_token, fns_token)
         sites.append(site)
+        # Можно выводить прогресс
+        print(f"Искал сайт для ИНН {inn}: {site}")
     df['Сайт компании'] = sites
     return df
