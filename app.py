@@ -92,7 +92,7 @@ if st.session_state.df3 is not None:
                     st.session_state.df3, dadata_token, fns_token
                 )
         else:
-            st.warning("Пожалуйста, укажите все 3 API ключа")
+            st.warning("Пожалуйста, укажите все API ключи")
 if st.session_state.df4 is not None:
     st.success("Этап 4 завершён! Сайты найдены, где удалось")
     st.dataframe(st.session_state.df4)
