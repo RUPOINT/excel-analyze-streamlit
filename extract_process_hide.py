@@ -19,16 +19,18 @@ def process_excel(df):
             print("Входящий DataFrame пустой!")
             return df
 
-        if len(df.columns) < 3:
-            print("Недостаточно столбцов для объединения!")
-            return df
+        # --- Объединяем G011 и G0121 ---
+        col1 = "G011 (Направление перемещения)"
+        col2 = "G0121 (Таможенный режим)"
+        if col1 in df.columns and col2 in df.columns:
+            df["Перемещение + Режим"] = df[col1].astype(str) + " / " + df[col2].astype(str)
+            df = df.drop(columns=[col1, col2])
+        else:
+            print("Внимание: Одна из колонок для объединения не найдена!")
 
+        # --- Дальнейшие преобразования ---
         df = df.drop(columns=[col for col in df.columns if "грузовых мест" in col], errors='ignore')
         df = df.drop_duplicates(subset=["ND (Номер декларации)"], keep=False)
-
-        second_col, third_col = df.columns[1], df.columns[2]
-        df["Перемещение + Режим"] = df[second_col].astype(str) + " / " + df[third_col].astype(str)
-        df = df.drop(columns=[second_col, third_col])
 
         declarant_col = "G142 (Наименование декларанта)"
         if declarant_col in df.columns:
@@ -74,4 +76,5 @@ def process_excel(df):
     except Exception as e:
         print("Ошибка при обработке:", e)
         raise
+
 
