@@ -78,19 +78,18 @@ if st.session_state.df3 is not None:
     )
 
 # ---------- Этап 4: Поиск сайтов компании ----------
-st.write("DEBUG: df3", st.session_state.df3)   # <---- вот это добавь!
+st.write("", st.session_state.df3)   # <---- вот это добавь!
 if st.session_state.df3 is not None:
     st.markdown("---")
     st.subheader("Этап 4: Поиск сайта компании по ИНН через Dadata, Контур.Фокус, ФНС")
 
     dadata_token = st.text_input("Dadata API ключ", type="password")
-    kontur_token = st.text_input("Контур.Фокус API ключ", type="password")
     fns_token = st.text_input("Да-Да API ФНС ключ", type="password")
     if st.button("Обработать этап 4"):
-        if dadata_token and kontur_token and fns_token:
+        if dadata_token  and fns_token:
             with st.spinner("Ищу сайты компаний по ИНН, подождите..."):
                 st.session_state.df4 = process_excel_stage4(
-                    st.session_state.df3, dadata_token, kontur_token, fns_token
+                    st.session_state.df3, dadata_token, fns_token
                 )
         else:
             st.warning("Пожалуйста, укажите все 3 API ключа")
