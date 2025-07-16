@@ -5,7 +5,7 @@ from extract_process_hide import process_excel
 from extract_stage2 import process_excel_stage2
 from extract_stage3 import process_excel_stage3   # <- Добавь этот импорт
 
-st.title("Обработка Excel — этап 1, этап 2, этап 3")
+st.title("Обработка Excel")
 
 uploaded_file = st.file_uploader("Загрузите Excel-файл", type=["xlsx", "xls"])
 
